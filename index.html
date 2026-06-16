@@ -82,5 +82,14 @@
     </main>
 
     <script type="module" src="js/app.js?v=latest"></script>
+    
+    <!-- Registro de Service Worker para forzar actualización -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/TRAVEL-PLANNER-PRO/sw.js', { scope: '/TRAVEL-PLANNER-PRO/' })
+                .then(reg => console.log('SW registrado:', reg))
+                .catch(err => console.log('SW error:', err));
+        }
+    </script>
 </body>
 </html>
