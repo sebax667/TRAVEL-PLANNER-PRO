@@ -1,7 +1,6 @@
 // js/app.js
 import { initStorage, saveUser, getUser, toggleThemeStorage, getTheme, getDashboardStats, addToHistory, toggleFavoriteCountry, isCountryFavorite, toggleFavoriteAttraction, isAttractionFavorite } from './storage.js';
 import { fetchCountryData } from './countries.js';
-import { getCountryFromLocalDB } from './api.js';
 import { fetchWeatherData } from './weather.js';
 import { fetchCurrencyData } from './currency.js';
 import { fetchTourismData } from './tourism.js';
@@ -96,12 +95,8 @@ searchForm.addEventListener('submit', async (e) => {
     tourismContainer.innerHTML = '<div class="info-card"><div class="spinner"></div><p style="text-align:center">Buscando atracciones...</p></div>';
 
     try {
-        // 2. Consumir API de país - Primero desde BD local, luego API
-        let countryData = getCountryFromLocalDB(searchInput);
-        
-        if (!countryData) {
-            countryData = await fetchCountryData(searchInput);
-        }
+        // 2. Consumir API de país (BD local con fallback a API externa)
+        const countryData = await fetchCountryData(searchInput);
 
         // 3. Renderizar País con botón de favorito
         const isFav = isCountryFavorite(countryData.name);

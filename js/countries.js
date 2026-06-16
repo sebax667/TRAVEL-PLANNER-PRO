@@ -1,6 +1,7 @@
-// js/countries.js
+// js/countries.js - Base de datos local con prioridad
 
-const countriesData = {
+// Base de datos local de países (sin dependencias externas)
+const COUNTRIES_DB = {
     'Brazil': { name: 'Brazil', capital: 'Brasília', flag: 'https://flagcdn.com/br.svg', region: 'Americas', subregion: 'South America', population: 215313498, languages: 'Portuguese', currencyCode: 'BRL', currencyName: 'Brazilian Real', latlng: [-14.2350, -51.9253] },
     'Colombia': { name: 'Colombia', capital: 'Bogotá', flag: 'https://flagcdn.com/co.svg', region: 'Americas', subregion: 'South America', population: 52085168, languages: 'Spanish', currencyCode: 'COP', currencyName: 'Colombian Peso', latlng: [4.5709, -74.2973] },
     'France': { name: 'France', capital: 'Paris', flag: 'https://flagcdn.com/fr.svg', region: 'Europe', subregion: 'Western Europe', population: 67750000, languages: 'French', currencyCode: 'EUR', currencyName: 'Euro', latlng: [46.2276, 2.2137] },
@@ -19,11 +20,12 @@ const countriesData = {
 
 export const fetchCountryData = async (countryName) => {
     try {
-        // Buscar en nuestra base de datos local primero (para velocidad y sin CORS)
-        const key = Object.keys(countriesData).find(k => k.toLowerCase() === countryName.toLowerCase());
+        // SIEMPRE intentar base de datos local primero
+        const key = Object.keys(COUNTRIES_DB).find(k => k.toLowerCase() === countryName.toLowerCase());
         
         if (key) {
-            const country = countriesData[key];
+            const country = COUNTRIES_DB[key];
+            console.log(`✓ País encontrado en BD local: ${country.name}`);
             return {
                 name: country.name,
                 flag: country.flag,
@@ -38,41 +40,9 @@ export const fetchCountryData = async (countryName) => {
             };
         }
         
-        // Si no está en la base de datos, intentar con RESTCountries usando CORS proxy
-        const corsProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://restcountries.com/v3.1/name/${countryName}`)}`;
-        const response = await fetch(corsProxyUrl);
-        
-        if (!response.ok) {
-            throw new Error(`País "${countryName}" no encontrado. Intenta con: ${Object.keys(countriesData).slice(0, 5).join(', ')}...`);
-        }
-
-        const proxyData = await response.json();
-        if (!proxyData.contents) {
-            throw new Error(`País "${countryName}" no encontrado. Intenta con: ${Object.keys(countriesData).slice(0, 5).join(', ')}...`);
-        }
-        
-        const data = JSON.parse(proxyData.contents);
-        if (!Array.isArray(data) || data.length === 0) {
-            throw new Error(`País "${countryName}" no encontrado. Intenta con: ${Object.keys(countriesData).slice(0, 5).join(', ')}...`);
-        }
-        
-        const country = data[0];
-        const currencyCode = country.currencies ? Object.keys(country.currencies)[0] : 'N/A';
-        const currencyName = country.currencies ? country.currencies[currencyCode].name : 'Desconocida';
-        const languages = country.languages ? Object.values(country.languages).join(', ') : 'Desconocido';
-
-        return {
-            name: country.name.common,
-            flag: country.flags.svg,
-            capital: country.capital ? country.capital[0] : 'N/A',
-            population: country.population.toLocaleString('es-ES'),
-            region: country.region,
-            subregion: country.subregion,
-            currencyCode: currencyCode,
-            currencyName: currencyName,
-            languages: languages,
-            latlng: country.latlng
-        };
+        // Si no está en BD local, mostrar error amigable
+        const availableCountries = Object.keys(COUNTRIES_DB).join(', ');
+        throw new Error(`País "${countryName}" no disponible. Países disponibles: ${availableCountries}`);
 
     } catch (error) {
         console.error("Error en fetchCountryData:", error);
