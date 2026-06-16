@@ -2,15 +2,28 @@
 
 export const fetchCountryData = async (countryName) => {
     try {
-        // Petición a la API usando Fetch con Async/Await
-        const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+        // Usar CORS proxy para acceder a RESTCountries API desde GitHub Pages
+        const corsProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://restcountries.com/v3.1/name/${countryName}`)}`;
         
-        // Manejo estricto de errores HTTP
+        const response = await fetch(corsProxyUrl);
+        
         if (!response.ok) {
-            throw new Error('País no encontrado. Verifica el nombre e intenta en inglés.');
+            throw new Error('Servicio temporalmente no disponible');
         }
 
-        const data = await response.json();
+        const proxyData = await response.json();
+        
+        // El proxy devuelve los datos en la propiedad 'contents'
+        if (!proxyData.contents) {
+            throw new Error('País no encontrado. Verifica el nombre e intenta en inglés.');
+        }
+        
+        const data = JSON.parse(proxyData.contents);
+        
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error('País no encontrado. Verifica el nombre e intenta en inglés.');
+        }
+        
         const country = data[0]; // Tomamos la mejor coincidencia (el primer resultado)
 
         // Extraer moneda e idioma de forma segura (vienen como objetos dinámicos en la API)
