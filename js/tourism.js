@@ -5,6 +5,17 @@
 // NOTA: Usamos Wikipedia API (gratuita, sin API Key requerida)
 // Busca artículos sobre lugares geográficos cercanos a las coordenadas del país.
 
+// URLs de imágenes confiables de Unsplash (con IDs reales)
+const FALLBACK_IMAGES = [
+    'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1565034946487-077786996e27?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1518998053401-878c735c908c?w=400&h=300&fit=crop',
+];
+
 export const fetchTourismData = async (lat, lng) => {
     try {
         // Wikipedia Geosearch API: busca artículos cercanos a las coordenadas
@@ -20,12 +31,12 @@ export const fetchTourismData = async (lat, lng) => {
         }
 
         // Tomar solo los primeros 5 resultados y mapear al formato esperado
-        return data.query.geosearch.slice(0, 5).map(place => ({
+        return data.query.geosearch.slice(0, 5).map((place, idx) => ({
             id: place.pageid,
             name: place.title,
             category: 'landmark',
-            // Usar imágenes de Wikimedia Commons que tienen mejor soporte CORS
-            image: `https://images.unsplash.com/photo-${['1506905925', '1469022563', '1488646953', '1495627866', '1506905925'][Math.floor(Math.random() * 5)]}?w=400&h=300&fit=crop`
+            // Usar imágenes confiables de Unsplash con URLs válidas
+            image: FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]
         }));
 
     } catch (error) {
