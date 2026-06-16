@@ -24,8 +24,8 @@ export const fetchTourismData = async (lat, lng) => {
             id: place.pageid,
             name: place.title,
             category: 'landmark',
-            // Imagen usando Unsplash con el nombre del lugar como búsqueda
-            image: `https://source.unsplash.com/400x300/?${encodeURIComponent(place.title)}` 
+            // Imagen usando Picsum con el ID del lugar como semilla para una imagen estable
+            image: `https://picsum.photos/seed/${place.pageid}/400/300`
         }));
 
     } catch (error) {
