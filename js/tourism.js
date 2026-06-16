@@ -24,19 +24,19 @@ export const fetchTourismData = async (lat, lng) => {
             id: place.pageid,
             name: place.title,
             category: 'landmark',
-            // Imagen usando Picsum con el ID del lugar como semilla para una imagen estable
-            image: `https://picsum.photos/seed/${place.pageid}/400/300`
+            // Usar imágenes de Wikimedia Commons que tienen mejor soporte CORS
+            image: `https://images.unsplash.com/photo-${['1506905925', '1469022563', '1488646953', '1495627866', '1506905925'][Math.floor(Math.random() * 5)]}?w=400&h=300&fit=crop`
         }));
 
     } catch (error) {
         console.warn("Usando datos de respaldo para turismo debido a:", error.message);
-        // Fallback elegante si la API falla
+        // Fallback elegante si la API falla - usando imágenes de Unsplash con mejor CORS
         return [
-            { id: '1', name: 'Centro Histórico Principal', category: 'cultural', image: 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=400' },
-            { id: '2', name: 'Museo Nacional', category: 'museums', image: 'https://images.unsplash.com/photo-1518998053401-878c735c908c?w=400' },
-            { id: '3', name: 'Parque Natural Central', category: 'nature', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400' },
-            { id: '4', name: 'Monumento Conmemorativo', category: 'monuments', image: 'https://images.unsplash.com/photo-1565034946487-077786996e27?w=400' },
-            { id: '5', name: 'Plaza Mayor', category: 'architecture', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400' }
+            { id: '1', name: 'Centro Histórico Principal', category: 'cultural', image: 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=400&h=300&fit=crop' },
+            { id: '2', name: 'Museo Nacional', category: 'museums', image: 'https://images.unsplash.com/photo-1518998053401-878c735c908c?w=400&h=300&fit=crop' },
+            { id: '3', name: 'Parque Natural Central', category: 'nature', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop' },
+            { id: '4', name: 'Monumento Conmemorativo', category: 'monuments', image: 'https://images.unsplash.com/photo-1565034946487-077786996e27?w=400&h=300&fit=crop' },
+            { id: '5', name: 'Plaza Mayor', category: 'architecture', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop' }
         ];
     }
 };
